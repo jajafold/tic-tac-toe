@@ -4,11 +4,27 @@ const EMPTY = ' ';
 
 const container = document.getElementById('fieldWrapper');
 
+let isPlayerTurn = true;
+let map = [];
+
+let player = [];
+let ii = [];
+
+
+
 startGame();
 addResetListener();
 
 function startGame () {
     renderGrid(3);
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            map.push({
+                X: i,
+                Y: j
+            });
+        }
+    }
 }
 
 function renderGrid (dimension) {
@@ -25,15 +41,58 @@ function renderGrid (dimension) {
         container.appendChild(row);
     }
 }
+function IITurn() {
+    let choiceIndex = randomInteger(0, map.length - 1);
+    let choice = map[choiceIndex];
+
+    console.log(`II Choice: ${choice.X} ${choice.Y}`);
+    renderSymbolInCell(CROSS, choice.X, choice.Y);
+    removeCell(choice.X, choice.Y, ii);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+function randomInteger(min, max) {
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    return Math.round(rand);
+}
+
+function removeCell(row, col, source) {
+    let candidate = {
+        X: row,
+        Y: col
+    };
+
+    let turn = map.splice(map.myIndexOf(candidate), 1);
+    source.push(turn[0]);
+}
 
 function cellClickHandler (row, col) {
-    // Пиши код тут
-    console.log(`Clicked on cell: ${row}, ${col}`);
+    if (map.myIndexOf({X: row, Y: col}) === -1) {
+        return;
+    }
 
+    console.log(`Player Choice ${row} ${col}`)
+    renderSymbolInCell(ZERO, row, col);
+    removeCell(row, col, player);
+    setTimeout(IITurn, 1000);
+}
 
-    /* Пользоваться методом для размещения символа в клетке так:
-        renderSymbolInCell(ZERO, row, col);
-     */
+Array.prototype.myIndexOf = function myIndexOf(elem) {
+    for (let i = 0; i < this.length; i++) {
+        if (this[i].X === elem.X && this[i].Y === elem.Y) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 function renderSymbolInCell (symbol, row, col, color = '#333') {
@@ -41,6 +100,10 @@ function renderSymbolInCell (symbol, row, col, color = '#333') {
 
     targetCell.textContent = symbol;
     targetCell.style.color = color;
+}
+
+function isWin(player) {
+    
 }
 
 function findCell (row, col) {
