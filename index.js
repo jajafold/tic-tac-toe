@@ -102,9 +102,6 @@ function renderSymbolInCell (symbol, row, col, color = '#333') {
     targetCell.style.color = color;
 }
 
-function isWin(player) {
-    
-}
 
 function findCell (row, col) {
     const targetRow = container.querySelectorAll('tr')[row];
